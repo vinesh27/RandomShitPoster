@@ -62,15 +62,24 @@ while True:
             # Preparing the message
             tweetContent = topPost.title + '\nCredits: ' + 'reddit.com' + topPost.permalink
             
-            # Just for future checking purposes
-            print(current_time + ' ----------------------------------------------------------')
-            print(current_time + ' Found a post from ' + subreddit.display_name)
-            print(current_time + ' ' + tweetContent.replace('\n', ' | '))
-            print(current_time + ' ----------------------------------------------------------')
-            
-            # Post this tweet
-            api.update_status(tweetContent)
+            if len(tweetContent) > 280:
+                tweetContent = topPost.title[:275] + '...'
+                
+                # Just for future checking purposes
+                print(current_time + ' ----------------------------------------------------------')
+                print(current_time + ' Found a post from ' + subreddit.display_name)
+                print(current_time + ' ' + tweetContent.replace('\n', ' | '))
+                print(current_time + ' ----------------------------------------------------------')
+                
+                # Post this tweet
+                status = api.update_status(tweetContent)
+                api.update_status(status = 'reddit.com' + topPost.permalink, in_reply_to_status_id = status.id)
+            else:
+                status = api.update_status(tweetContent)
             break
             
     # Sleeping for an hour
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print(current_time + ' Sleeping for an hour')
     time.sleep(60 * 60)
